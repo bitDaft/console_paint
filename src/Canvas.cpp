@@ -16,6 +16,8 @@ std::ostream& operator<<(std::ostream& o,_CANVAS &can)
   for (size_t i = 0; i < 80*25; i++) {
     o.write(reinterpret_cast<char *>(&can.cnvsBuffer[i]),sizeof(can.cnvsBuffer[i]));
   }
+  o << strlen(can.szName);
+  o << can.szName;
   return o;
 }
 
@@ -24,6 +26,10 @@ std::istream& operator>>(std::istream& o,_CANVAS &can)
   for (size_t i = 0; i < 80*25; i++) {
     o.read(reinterpret_cast<char *>(&can.cnvsBuffer[i]),sizeof(can.cnvsBuffer[i]));
   }
+  int t;
+  o >> t;
+  can.szName = new char[t+1];
+  o >> can.szName;
   return o;
 }
 

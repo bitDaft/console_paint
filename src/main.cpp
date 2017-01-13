@@ -46,15 +46,18 @@ int clrSel(CHAR_INFO &info)
   const char *Head[1]={"Foreground"};
   short len[1]={15};
   colrSelFore.setViewOption(Head,len,1,18,36,0,cWHITE,false,false);
+  colrSelFore.setHigh(cYELLOW);
   colrSelFore.RegView();
 
   Head[0]={"Background"};
   colrSelBack.setViewOption(Head,len,1,18,15,0,cWHITE,false,false);
+  colrSelBack.setHigh(cYELLOW);
   colrSelBack.RegView();
 
   Head[0]={" "};
   len[0]=36;
-  colrSelMid.setViewOption(Head,len,1,20,15,0,cWHITE,false,true);
+  colrSelMid.setViewOption(Head,len,1,3,15,19,cWHITE,false,true);
+  colrSelMid.setHigh(cYELLOW);
   colrSelMid.RegView();
 
   const char *entry[1] ;
@@ -141,7 +144,7 @@ int clrSel(CHAR_INFO &info)
       if (ir[0].EventType == MOUSE_EVENT) {
         mvr = ir[0].Event.MouseEvent;
         cc = mvr.dwMousePosition;
-        if(((cc.X >= 14 && cc.X <= 51)&&(cc.Y <= 24 && cc.Y >= 19)) || n1)
+        if(((cc.X >= 14 && cc.X <= 51)&&(cc.Y >= 19)) || n1)
         {
           x = colrSelMid.selectView();
           if(x == ON_MENU) n1 = true;
@@ -169,9 +172,15 @@ int clrSel(CHAR_INFO &info)
             n3 = false;
           }
         }
-        cc = {33,4};
+        cc = {72,4};
+        goxy(60,4);std::cout << "Template : ";
+        goxy(60,5);std::cout << "Current  : ";
+        FillConsoleOutputAttribute(hW,info.Attributes,1,cc,&temp);
+        FillConsoleOutputCharacter(hW,'A',1,cc,&temp);
+        cc = {72,5};
         FillConsoleOutputAttribute(hW,info.Attributes,1,cc,&temp);
         FillConsoleOutputCharacter(hW,info.Char.AsciiChar,1,cc,&temp);
+
 
       }FlushConsoleInputBuffer(hR);
     }
@@ -190,13 +199,13 @@ int charSel()
 
   for(int i = 0 ; i < 15 ; i++)
   {
-    charSel[i].setViewOption(Head,len,1,19,( i * 5 + 1 ),0,cWHITE,false,false);
-    charSel[i].setHigh(cbackRED|cWHITE);
+    charSel[i].setViewOption(Head,len,1,18,( i * 5 + 1 ),0,cbackDARKYELLOW|cWHITE,false,false);
+    charSel[i].setHigh(cWHITE);
     charSel[i].RegView();
   }
   len[0]={4};
-  charSel[15].setViewOption(Head,len,1,19,( 15 * 5 ),0,cWHITE,false,true);
-  charSel[15].setHigh(cbackRED|cWHITE);
+  charSel[15].setViewOption(Head,len,1,19,( 15 * 5 ),0,cbackDARKYELLOW|cWHITE,false,true);
+  charSel[15].setHigh(cWHITE);
   charSel[15].RegView();
 
   const char *entry[1] ;
@@ -407,7 +416,7 @@ int handleCanvasMenu(CHAR_INFO &charInfo,_CANVAS &canvas)
   for (short i = 0; i < 25; i++) {
     goxy(65,i);
     cc = {65,i};
-    FillConsoleOutputAttribute(hW, cGRAY, 15,cc, &temp);
+    FillConsoleOutputAttribute(hW, cWHITE, 15,cc, &temp);
     WriteConsoleOutputCharacter(hW,"|               ",15,cc,&temp);
   }
   static bool erase = false;
@@ -428,7 +437,7 @@ int handleCanvasMenu(CHAR_INFO &charInfo,_CANVAS &canvas)
 
   consoleMenu cnvsOpts("OPTION");
   cnvsOpts.setOptions(66,3,8,7,0,ENABLE_PLAIN,ALIGN_LEFT|SELECT_HIGHLIGHT,USE_MOUSE,true,false,true,"Exit");
-  cnvsOpts.setHigh(cWHITE|cbackDARKRED);
+  cnvsOpts.setHigh(cbackYELLOW);
   cnvsOpts.setmnBG(cWHITE);
   cnvsOpts.RegisterOptions();
   cnvsOpts.newItem("Colour",NULL);
@@ -553,7 +562,8 @@ std::string open(bool mode)
   invMenu openFile;
   const char *str[2]= {"FILE","DATE/TIME"};
   short len[2]={47,30};
-  openFile.setViewOption(str,len,2,10,0,5,cBLACK|cbackGREEN,true,true);
+  openFile.setViewOption(str,len,2,20,0,3,cBLACK|cbackDARKYELLOW,true,true);
+  openFile.setHigh(cYELLOW);
   openFile.RegView();
 
   std::vector<std::string> v;
@@ -644,10 +654,10 @@ void about()
 int main()
 {
   consoleMenu mnMenu("MENU");
-  mnMenu.setOptions(60,14,6,15,0,ENABLE_PLAIN,ALIGN_LEFT|SELECT_TEXT,USE_MOUSE,true,false,true,"Exit");
-  mnMenu.setHigh(cbackDARKRED|cDARKMAGENTA);
-  mnMenu.setOutcolor(cDARKBLUE,177);
-  mnMenu.setmnBG(cbackDARKCYAN|cWHITE);
+  mnMenu.setOptions(60,14,6,15,0,ENABLE_PLAIN,ALIGN_LEFT|SELECT_HIGHLIGHT,USE_MOUSE,true,false,true,"Exit");
+  mnMenu.setHigh(cbackWHITE);
+  mnMenu.setOutcolor(cbackRED|cGREEN,177);
+  mnMenu.setmnBG(cWHITE);
   mnMenu.RegisterOptions();
 
   mnMenu.newItem("New",NULL);
