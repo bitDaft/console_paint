@@ -3,3 +3,5 @@
 *.tags
 *.exe
 *.o
+*.depend
+*.tags1

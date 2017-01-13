@@ -5,11 +5,27 @@
  * @Email                : anodecode@gmail.com
  * @Filename             : Canvas.cpp
  * @Last modified by     : Tausif Ali
- * @Last modified time   : 08-Jan-2017
+ * @Last modified time   : 13-Jan-2017
  * @Copyright            : feel free to use, adding reference appreciated :)
 **/
 
 #include "Canvas.h"
+
+std::ostream& operator<<(std::ostream& o,_CANVAS &can)
+{
+  for (size_t i = 0; i < 80*25; i++) {
+    o.write(reinterpret_cast<char *>(&can.cnvsBuffer[i]),sizeof(can.cnvsBuffer[i]));
+  }
+  return o;
+}
+
+std::istream& operator>>(std::istream& o,_CANVAS &can)
+{
+  for (size_t i = 0; i < 80*25; i++) {
+    o.read(reinterpret_cast<char *>(&can.cnvsBuffer[i]),sizeof(can.cnvsBuffer[i]));
+  }
+  return o;
+}
 
 _CANVAS::_CANVAS()
 {
@@ -32,12 +48,23 @@ _CANVAS::~_CANVAS()
   modified = false;
 }
 
-void _CANVAS::GetcnvsBuffer(HANDLE hOut)
+const char* _CANVAS::getName()
+{
+  if(szName == NULL) return "";
+  return szName;
+}
+void _CANVAS::setName(const char* str)
+{
+  szName = new char[strlen(str)+1];
+  strcpy(szName,str);
+}
+
+void _CANVAS::DrawCnvs(HANDLE hOut)
 {
   WriteConsoleOutput(hOut,cnvsBuffer,{80,25},{0,0},&outBuffRect);
 }
 
-void _CANVAS::SetCnvsBuffer(HANDLE hOut)
+void _CANVAS::StoreCnvs(HANDLE hOut)
 {
   ReadConsoleOutput(hOut,cnvsBuffer,{80,25},{0,0},&outBuffRect);
 }
@@ -45,4 +72,8 @@ void _CANVAS::SetCnvsBuffer(HANDLE hOut)
 void _CANVAS::saved(bool t)
 {
   modified = !t;
+}
+bool _CANVAS::saved()
+{
+  return !modified;
 }
