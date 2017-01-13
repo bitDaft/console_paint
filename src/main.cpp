@@ -9,26 +9,19 @@
  * @Copyright            : feel free to use, adding reference appreciated :)
 **/
 
-/** an improved paint application with user friendly interface and functionality **/
 
-/** features sketch
 
-new save delete open edit-implicitly impiled
-
-**/
-
-#include <windows.h>
-#include <sstream>
-#include <string>
-#include <iostream>
-#include <fstream>
 #include <io.h>
 #include <time.h>
 #include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <windows.h>
+
 #include "Canvas.h"
 #include "consoleMenu.h"
-
-// using namespace std;
 
 void goxy(short x,short y)
 {
@@ -125,53 +118,64 @@ int clrSel(CHAR_INFO &info)
   INPUT_RECORD ir[1];
   MOUSE_EVENT_RECORD mvr;
 
-  for (short i = 0; i < 16; i++) {
-  cc = {30,short(i+1)};
-  FillConsoleOutputAttribute(hW,i,1,cc,&temp);
-  FillConsoleOutputCharacter(hW,static_cast<char>(0xDB),1,cc,&temp);
-  cc = {51,short(i+1)};
-  FillConsoleOutputAttribute(hW,i,1,cc,&temp);
-  FillConsoleOutputCharacter(hW,static_cast<char>(0xDB),1,cc,&temp);
-}
+  for (short i = 0; i < 16; i++)
+  {
+    cc = {30,short(i+1)};
+    FillConsoleOutputAttribute(hW,i,1,cc,&temp);
+    FillConsoleOutputCharacter(hW,static_cast<char>(0xDB),1,cc,&temp);
+
+    cc = {51,short(i+1)};
+    FillConsoleOutputAttribute(hW,i,1,cc,&temp);
+    FillConsoleOutputCharacter(hW,static_cast<char>(0xDB),1,cc,&temp);
+  }
 
   int x = NOT_ON_MENU;
-  bool n1 = 0,n2 = 0,n3 = 0;
+  bool n1 = 0, n2 = 0, n3 = 0;
 
   do {
     PeekConsoleInput(hR,ir,1,&temp);
     if(temp)
     {
-      if (ir[0].EventType == MOUSE_EVENT) {
+      if (ir[0].EventType == MOUSE_EVENT)
+      {
         mvr = ir[0].Event.MouseEvent;
         cc = mvr.dwMousePosition;
-        if(((cc.X >= 14 && cc.X <= 51)&&(cc.Y >= 19)) || n1)
+        if((cc.X >= 14 && cc.X <= 51 && cc.Y >= 19) || n1)
         {
           x = colrSelMid.selectView();
-          if(x == ON_MENU) n1 = true;
-          else n1 = false;
+          if(x == ON_MENU)
+            n1 = true;
+          else
+            n1 = false;
         }
-        if (((cc.X >= 35 && cc.X <= 51)&&(cc.Y < 19)) || n2) {
+        if ((cc.X >= 35 && cc.X <= 51 && cc.Y < 19) || n2)
+        {
           x = colrSelFore.selectView();
           if(x == ON_MENU) n2 = true;
-          else {
-            if(x > 0){
+          else
+          {
+            if(x > 0)
+            {
               info.Attributes &= 0xF0;
               info.Attributes |= x;
             }
             n2 = false;
           }
         }
-        if(((cc.X >= 14 && cc.X <= 31)&&(cc.Y < 19)) || n3) {
+        if((cc.X >= 14 && cc.X <= 31 && cc.Y < 19) || n3) {
           x = colrSelBack.selectView();
           if(x == ON_MENU) n3 = true;
-          else {
-            if(x > 0){
+          else
+          {
+            if(x > 0)
+            {
               info.Attributes &=0x0F;
               info.Attributes |= (x<<4);
             }
             n3 = false;
           }
         }
+
         cc = {72,4};
         goxy(60,4);std::cout << "Template : ";
         goxy(60,5);std::cout << "Current  : ";
@@ -180,12 +184,10 @@ int clrSel(CHAR_INFO &info)
         cc = {72,5};
         FillConsoleOutputAttribute(hW,info.Attributes,1,cc,&temp);
         FillConsoleOutputCharacter(hW,info.Char.AsciiChar,1,cc,&temp);
-
-
-      }FlushConsoleInputBuffer(hR);
+      }
+      FlushConsoleInputBuffer(hR);
     }
   } while(x);
-
   return 0;
 }
 
@@ -247,15 +249,17 @@ int charSel()
     PeekConsoleInput(hR,ir,1,&temp);
     if(temp)
     {
-      if (ir[0].EventType == MOUSE_EVENT) {
+      if (ir[0].EventType == MOUSE_EVENT)
+      {
         mvr = ir[0].Event.MouseEvent;
         cc = mvr.dwMousePosition;
-        if(((cc.X >= 0 && cc.X < 5)&&(cc.Y <= 20)) || n[0]) {
+        if((cc.X >= 0 && cc.X < 5&&cc.Y <= 20) || n[0])
+        {
           x = charSel[0].selectView();
           if(x == ON_MENU) n[0] = true;
           else n[0] = false;
         }
-        if(((cc.X >= 5 && cc.X < 10)&&(cc.Y <= 20)) || n[1]) {
+        if((cc.X >= 5 && cc.X < 10&&cc.Y <= 20) || n[1]) {
           x = charSel[1].selectView();
           if(x == ON_MENU) n[1] = true;
           else {
@@ -264,7 +268,7 @@ int charSel()
             x+=16;
           }
         }
-        if(((cc.X >= 10 && cc.X < 15)&&(cc.Y <= 20)) || n[2]) {
+        if((cc.X >= 10 && cc.X < 15&&cc.Y <= 20) || n[2]) {
           x = charSel[2].selectView();
           if(x == ON_MENU) n[2] = true;
           else {
@@ -273,7 +277,7 @@ int charSel()
             x+=16*2;
           }
         }
-        if(((cc.X >= 15 && cc.X < 20)&&(cc.Y <= 20)) || n[3]) {
+        if((cc.X >= 15 && cc.X < 20&&cc.Y <= 20) || n[3]) {
           x = charSel[3].selectView();
           if(x == ON_MENU) n[3] = true;
           else {
@@ -281,7 +285,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*3;}
         }
-        if(((cc.X >= 20 && cc.X < 25)&&(cc.Y <= 20)) || n[4]) {
+        if((cc.X >= 20 && cc.X < 25&&cc.Y <= 20) || n[4]) {
           x = charSel[4].selectView();
           if(x == ON_MENU) n[4] = true;
           else {
@@ -289,7 +293,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*4;}
         }
-        if(((cc.X >= 25 && cc.X < 30)&&(cc.Y <= 20)) || n[5]) {
+        if((cc.X >= 25 && cc.X < 30&&cc.Y <= 20) || n[5]) {
           x = charSel[5].selectView();
           if(x == ON_MENU) n[5] = true;
           else {
@@ -297,7 +301,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*5;}
         }
-        if(((cc.X >= 30 && cc.X < 35)&&(cc.Y <= 20)) || n[6]) {
+        if((cc.X >= 30 && cc.X < 35&&cc.Y <= 20) || n[6]) {
           x = charSel[6].selectView();
           if(x == ON_MENU) n[6] = true;
           else {
@@ -305,7 +309,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*6;}
         }
-        if(((cc.X >= 35 && cc.X < 40)&&(cc.Y <= 20)) || n[7]) {
+        if((cc.X >= 35 && cc.X < 40&&cc.Y <= 20) || n[7]) {
           x = charSel[7].selectView();
           if(x == ON_MENU) n[7] = true;
           else {
@@ -313,7 +317,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*7;}
         }
-        if(((cc.X >= 40 && cc.X < 45)&&(cc.Y <= 20)) || n[8]) {
+        if((cc.X >= 40 && cc.X < 45&&cc.Y <= 20) || n[8]) {
           x = charSel[8].selectView();
           if(x == ON_MENU) n[8] = true;
           else {
@@ -321,7 +325,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*8;
         }}
-        if(((cc.X >= 45 && cc.X < 50)&&(cc.Y <= 20)) || n[9]) {
+        if((cc.X >= 45 && cc.X < 50&&cc.Y <= 20) || n[9]) {
           x = charSel[9].selectView();
           if(x == ON_MENU) n[9] = true;
           else {
@@ -329,7 +333,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*9;}
         }
-        if(((cc.X >= 50 && cc.X < 55)&&(cc.Y <= 20)) || n[10]) {
+        if((cc.X >= 50 && cc.X < 55&&cc.Y <= 20) || n[10]) {
           x = charSel[10].selectView();
           if(x == ON_MENU) n[10] = true;
           else {
@@ -337,7 +341,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*10;
         }}
-        if(((cc.X >= 55 && cc.X < 60)&&(cc.Y <= 20)) || n[11]) {
+        if((cc.X >= 55 && cc.X < 60&&cc.Y <= 20) || n[11]) {
           x = charSel[11].selectView();
           if(x == ON_MENU) n[11] = true;
           else {
@@ -345,7 +349,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*11;
         }}
-        if(((cc.X >= 60 && cc.X < 65)&&(cc.Y <= 20)) || n[12]) {
+        if((cc.X >= 60 && cc.X < 65&&cc.Y <= 20) || n[12]) {
           x = charSel[12].selectView();
           if(x == ON_MENU) n[12] = true;
           else {
@@ -353,7 +357,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*12;
         }}
-        if(((cc.X >= 65 && cc.X < 70)&&(cc.Y <= 20)) || n[13]) {
+        if((cc.X >= 65 && cc.X < 70&&cc.Y <= 20) || n[13]) {
           x = charSel[13].selectView();
           if(x == ON_MENU) n[13] = true;
           else {
@@ -361,7 +365,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*13;
         }}
-        if(((cc.X >= 70 && cc.X < 75)&&(cc.Y <= 20)) || n[14]) {
+        if((cc.X >= 70 && cc.X < 75&&cc.Y <= 20) || n[14]) {
           x = charSel[14].selectView();
           if(x == ON_MENU) n[14] = true;
           else{
@@ -369,7 +373,7 @@ int charSel()
             if(x != NOT_ON_MENU)
             x+=16*14;
         }}
-        if(((cc.X >= 75 && cc.X < 80)&&(cc.Y <= 20)) || n[15]) {
+        if((cc.X >= 75 && cc.X < 80&&cc.Y <= 20) || n[15]) {
           x = charSel[15].selectView();
           if(!x) break;
           if(x == ON_MENU) n[15] = true;
@@ -531,7 +535,8 @@ do{
         {
           mRec = inRec[0].Event.MouseEvent;
           press = mRec.dwMousePosition;
-          if (mRec.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+          if (mRec.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+          {
             FillConsoleOutputAttribute(hWcon,bStencil.Attributes,1,press,&temp);
             FillConsoleOutputCharacter(hWcon,bStencil.Char.AsciiChar,1,press,&temp);
             curCanvas.saved(false);
@@ -543,7 +548,8 @@ do{
           kRec = inRec[0].Event.KeyEvent;
           char ch = (char)kRec.uChar.AsciiChar;
           ch = ch | 0x20;
-          if (ch == 't') {
+          if (ch == 't')
+          {
             curCanvas.StoreCnvs(hWcon);
             int val = handleCanvasMenu(bStencil,curCanvas);
             if (val) return 1;
@@ -637,14 +643,22 @@ void about()
   clearScreen(0,0);
   int i=7;
   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,5);std::cout  << "PPPPPPPP AAAAAAAAA  IIIIIIII NNNN     NN TTTTTTTT ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,6);std::cout  << "PP    PP AA     AA     II    NN NN    NN    TT    ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,7);std::cout  << "PP    PP AA     AA     II    NN  NN   NN    TT    ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,8);std::cout  << "PPPPPPPP AAAAAAAAA     II    NN   NN  NN    TT    ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,9);std::cout  << "PP       AA     AA     II    NN    NN NN    TT    ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,10);std::cout << "PP       AA     AA     II    NN     NNNN    TT    ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,11);std::cout << "PP       AA     AA  IIIIIIII NN      NNN    TT    ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
-  goxy(10,13);std::cout << "================================================= ";SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,5);std::cout  << "PPPPPPPP AAAAAAAAA  IIIIIIII NNNN     NN TTTTTTTT ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,6);std::cout  << "PP    PP AA     AA     II    NN NN    NN    TT    ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,7);std::cout  << "PP    PP AA     AA     II    NN  NN   NN    TT    ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,8);std::cout  << "PPPPPPPP AAAAAAAAA     II    NN   NN  NN    TT    ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,9);std::cout  << "PP       AA     AA     II    NN    NN NN    TT    ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,10);std::cout << "PP       AA     AA     II    NN     NNNN    TT    ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,11);std::cout << "PP       AA     AA  IIIIIIII NN      NNN    TT    ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
+  goxy(10,13);std::cout << "================================================= ";
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),i++);
   goxy(10,15);std::cout << "            DEVELOPED BY - TAUSIF ALI             ";
   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),cWHITE);
   std::cout << "\n\n\nPress Enter to return to Menu" << '\n';
